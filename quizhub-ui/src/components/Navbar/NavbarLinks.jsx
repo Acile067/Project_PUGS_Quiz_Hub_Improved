@@ -52,17 +52,35 @@ const NavbarLinks = ({ authenticated, role, userId, handleLogout }) => {
               Leaderboard
             </Link>
           </li>
+          <li>
+            <Link
+              to="/lobby/join"
+              className="block mt-1 py-2 px-3 text-gray-900 rounded-lg hover:bg-gray-100 md:hover:bg-transparent md:p-0 text-base font-medium text-center"
+            >
+              Join Lobby
+            </Link>
+          </li>
 
           {/* Admin only link */}
           {role === "Admin" && (
-            <li>
-              <Link
-                to="/quiz/admin"
-                className="block mt-1 py-2 px-3 text-gray-900 font-bold rounded-lg hover:bg-gray-100 md:hover:bg-transparent md:p-0 text-base text-center"
-              >
-                QuizAdmin
-              </Link>
-            </li>
+            <>
+              <li>
+                <Link
+                  to="/quiz/admin"
+                  className="block mt-1 py-2 px-3 text-gray-900 font-bold rounded-lg hover:bg-gray-100 md:hover:bg-transparent md:p-0 text-base text-center"
+                >
+                  QuizAdmin
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/lobby/create"
+                  className="block mt-1 py-2 px-3 text-gray-900 font-bold rounded-lg hover:bg-gray-100 md:hover:bg-transparent md:p-0 text-base text-center"
+                >
+                  CreateLobby
+                </Link>
+              </li>
+            </>
           )}
           <li className="md:hidden">
             <button

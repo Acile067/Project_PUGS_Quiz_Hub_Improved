@@ -22,6 +22,7 @@ namespace QuizHub.Infrastructure.Data
         public DbSet<Question> Questions { get; set; }
         public DbSet<QuizResult> QuizResults { get; set; }
         public DbSet<UserAnswer> UserAnswers { get; set; }
+        public DbSet<Loby> Lobies { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -90,6 +91,22 @@ namespace QuizHub.Infrastructure.Data
                 .WithOne(qr => qr.Quiz)
                 .HasForeignKey(qr => qr.QuizId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Loby>()
+                .HasOne<User>()
+                .WithMany() 
+                .HasForeignKey(l => l.CreatorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Loby>()
+                .HasMany(l => l.Participants)
+                .WithMany();
+
+            modelBuilder.Entity<Loby>()
+                .HasOne(l => l.Quiz)
+                .WithMany()
+                .HasForeignKey(l => l.QuizId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

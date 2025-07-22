@@ -28,6 +28,8 @@ const EditQuizForm = React.lazy(() =>
   import("../components/EditQuizForm/EditQuizForm")
 );
 const AdminQuizPage = React.lazy(() => import("../pages/AdminQuizPage"));
+const JoinLobbyPage = React.lazy(() => import("../pages/JoinLobbyPage"));
+const CreateLobbyPage = React.lazy(() => import("../pages/CreateLobbyPage"));
 
 export const mainRoutes = (
   <Route path="/" element={<MainLayout />}>
@@ -73,6 +75,14 @@ export const mainRoutes = (
       }
     />
     <Route
+      path="lobby/join"
+      element={
+        <PrivateRoute>
+          <JoinLobbyPage />
+        </PrivateRoute>
+      }
+    />
+    <Route
       path="quiz-result/admin/:quizId"
       element={
         <AdminRoute>
@@ -109,6 +119,22 @@ export const mainRoutes = (
       element={
         <AdminRoute>
           <EditQuizForm />
+        </AdminRoute>
+      }
+    />
+    <Route
+      path="quiz/admin"
+      element={
+        <AdminRoute>
+          <AdminQuizPage />
+        </AdminRoute>
+      }
+    />
+    <Route
+      path="lobby/create"
+      element={
+        <AdminRoute>
+          <CreateLobbyPage />
         </AdminRoute>
       }
     />
