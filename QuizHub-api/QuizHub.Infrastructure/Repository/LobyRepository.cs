@@ -29,5 +29,18 @@ namespace QuizHub.Infrastructure.Repository
                 .Where(l => l.IsActive && l.StartAt >= DateTime.UtcNow)
                 .ToListAsync(cancellationToken);
         }
+
+        public async Task<Loby?> GetLobyByIdAsync(string lobyId)
+        {
+            return await _context.Lobies
+                .Include(l => l.Participants)
+                .FirstOrDefaultAsync(l => l.Id == lobyId);
+        }
+
+        public async Task<bool> UpdateLobyAsync(Loby loby)
+        {          
+            _context.Lobies.Update(loby);
+            return await _context.SaveChangesAsync() > 0;
+        }
     }
 }

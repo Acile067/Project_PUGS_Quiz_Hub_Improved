@@ -1,6 +1,7 @@
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 
 let connection = null;
+let connectedLobbyId = null;
 let userJoinedCallback = null;
 let userLeftCallback = null;
 
@@ -19,12 +20,10 @@ export const startLobbyConnection = async (token) => {
       .build();
 
     connection.on("UserJoined", (username) => {
-      console.log("UserJoined:", username);
       if (userJoinedCallback) userJoinedCallback(username);
     });
 
     connection.on("UserLeft", (username) => {
-      console.log("UserLeft:", username);
       if (userLeftCallback) userLeftCallback(username);
     });
 
@@ -34,25 +33,24 @@ export const startLobbyConnection = async (token) => {
 };
 
 export const joinLobbyGroup = async (lobbyId) => {
-  if (connection) {
-    // čekaj da konekcija bude u Connected stanju
-    if (connection.state !== "Connected") {
-      await new Promise((resolve, reject) => {
-        const interval = setInterval(() => {
-          if (connection.state === "Connected") {
-            clearInterval(interval);
-            resolve();
-          } else if (connection.state === "Disconnected") {
-            clearInterval(interval);
-            reject(new Error("Connection disconnected"));
-          }
-        }, 50);
-      });
-    }
-    await connection.invoke("JoinLobby", lobbyId);
-  } else {
-    throw new Error("No SignalR connection available");
+  if (connectedLobbyId === lobbyId) return; // već si u grupi
+
+  if (connection?.state !== "Connected") {
+    await new Promise((resolve, reject) => {
+      const interval = setInterval(() => {
+        if (connection.state === "Connected") {
+          clearInterval(interval);
+          resolve();
+        } else if (connection.state === "Disconnected") {
+          clearInterval(interval);
+          reject(new Error("Connection disconnected"));
+        }
+      }, 50);
+    });
   }
+
+  await connection.invoke("JoinLobby", lobbyId);
+  connectedLobbyId = lobbyId;
 };
 
 export const registerUserJoinedHandler = (callback) => {
@@ -61,12 +59,10 @@ export const registerUserJoinedHandler = (callback) => {
 
 export const leaveLobbyGroup = async (lobbyId) => {
   if (connection) {
-    // Pozovi server da napusti grupu i obavesti druge
     await connection.invoke("LeaveLobby", lobbyId);
-
-    // Opcionalno: odjavi sve event handlere ako ih imaš
+    connectedLobbyId = null;
     userJoinedCallback = null;
-    userLeftCallback = null; // ako dodaješ ovaj handler dolje
+    userLeftCallback = null;
   }
 };
 
