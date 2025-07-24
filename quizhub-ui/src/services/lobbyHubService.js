@@ -25,7 +25,23 @@ export const startLobbyConnection = async (token) => {
 
 export const joinLobbyGroup = async (lobbyId) => {
   if (connection) {
+    // čekaj da konekcija bude u Connected stanju
+    if (connection.state !== "Connected") {
+      await new Promise((resolve, reject) => {
+        const interval = setInterval(() => {
+          if (connection.state === "Connected") {
+            clearInterval(interval);
+            resolve();
+          } else if (connection.state === "Disconnected") {
+            clearInterval(interval);
+            reject(new Error("Connection disconnected"));
+          }
+        }, 50);
+      });
+    }
     await connection.invoke("JoinLobby", lobbyId);
+  } else {
+    throw new Error("No SignalR connection available");
   }
 };
 

@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getActiveLobbies, joinLobby } from "../../services/lobbyService";
-import {
-  startLobbyConnection,
-  joinLobbyGroup,
-} from "../../services/lobbyHubService";
+import { getActiveLobbies } from "../../services/lobbyService";
 import { useNavigate } from "react-router-dom";
 
 const LobbyList = () => {
@@ -19,14 +15,8 @@ const LobbyList = () => {
     fetchData();
   }, []);
 
-  const handleJoin = async (lobbyId) => {
-    const { ok } = await joinLobby(lobbyId);
-    if (ok) {
-      const token = localStorage.getItem("access_token");
-      await startLobbyConnection(token);
-      await joinLobbyGroup(lobbyId);
-      navigate(`/lobby/join/${lobbyId}`);
-    }
+  const handleJoin = (lobbyId) => {
+    navigate(`/lobby/join/${lobbyId}`);
   };
 
   return (

@@ -6,6 +6,8 @@ import {
   registerUserJoinedHandler,
 } from "../../services/lobbyHubService";
 
+import { joinLobby } from "../../services/lobbyService";
+
 const WaitingRoom = () => {
   const { id: lobbyId } = useParams();
   const [joinedUsers, setJoinedUsers] = useState([]);
@@ -14,14 +16,26 @@ const WaitingRoom = () => {
     const token = localStorage.getItem("access_token");
 
     const connect = async () => {
+      const { ok } = await joinLobby(lobbyId);
+      if (!ok) {
+        console.error("Failed to join lobby");
+        return;
+      }
+
       await startLobbyConnection(token);
       await joinLobbyGroup(lobbyId);
+
       registerUserJoinedHandler((username) => {
-        setJoinedUsers((prev) => [...prev, username]);
+        setJoinedUsers((prev) => {
+          if (prev.includes(username)) return prev;
+          return [...prev, username];
+        });
       });
     };
 
     connect();
+
+    return () => {};
   }, [lobbyId]);
 
   return (
