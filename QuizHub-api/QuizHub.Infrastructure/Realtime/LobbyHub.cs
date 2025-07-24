@@ -20,6 +20,9 @@ namespace QuizHub.Infrastructure.Realtime
         public async Task LeaveLobby(string lobbyId)
         {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, lobbyId);
+
+            var username = Context.User?.Identity?.Name ?? "Unknown";
+            await Clients.Group(lobbyId).SendAsync("UserLeft", username);
         }
     }
 }

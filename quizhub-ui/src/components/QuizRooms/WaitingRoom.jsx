@@ -3,7 +3,10 @@ import { useParams } from "react-router-dom";
 import {
   startLobbyConnection,
   joinLobbyGroup,
+  leaveLobbyGroup,
+  stopLobbyConnection,
   registerUserJoinedHandler,
+  registerUserLeftHandler,
 } from "../../services/lobbyHubService";
 
 import { joinLobby } from "../../services/lobbyService";
@@ -31,11 +34,18 @@ const WaitingRoom = () => {
           return [...prev, username];
         });
       });
+
+      registerUserLeftHandler((username) => {
+        setJoinedUsers((prev) => prev.filter((u) => u !== username));
+      });
     };
 
     connect();
 
-    return () => {};
+    return () => {
+      leaveLobbyGroup(lobbyId);
+      stopLobbyConnection();
+    };
   }, [lobbyId]);
 
   return (

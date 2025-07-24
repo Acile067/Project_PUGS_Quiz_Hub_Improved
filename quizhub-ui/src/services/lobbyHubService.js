@@ -2,6 +2,11 @@ import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 
 let connection = null;
 let userJoinedCallback = null;
+let userLeftCallback = null;
+
+export const registerUserLeftHandler = (callback) => {
+  userLeftCallback = callback;
+};
 
 export const startLobbyConnection = async (token) => {
   if (!connection) {
@@ -16,6 +21,11 @@ export const startLobbyConnection = async (token) => {
     connection.on("UserJoined", (username) => {
       console.log("UserJoined:", username);
       if (userJoinedCallback) userJoinedCallback(username);
+    });
+
+    connection.on("UserLeft", (username) => {
+      console.log("UserLeft:", username);
+      if (userLeftCallback) userLeftCallback(username);
     });
 
     await connection.start();
@@ -47,4 +57,24 @@ export const joinLobbyGroup = async (lobbyId) => {
 
 export const registerUserJoinedHandler = (callback) => {
   userJoinedCallback = callback;
+};
+
+export const leaveLobbyGroup = async (lobbyId) => {
+  if (connection) {
+    // Pozovi server da napusti grupu i obavesti druge
+    await connection.invoke("LeaveLobby", lobbyId);
+
+    // Opcionalno: odjavi sve event handlere ako ih imaš
+    userJoinedCallback = null;
+    userLeftCallback = null; // ako dodaješ ovaj handler dolje
+  }
+};
+
+export const stopLobbyConnection = async () => {
+  if (connection) {
+    await connection.stop();
+    connection = null;
+    userJoinedCallback = null;
+    userLeftCallback = null;
+  }
 };
