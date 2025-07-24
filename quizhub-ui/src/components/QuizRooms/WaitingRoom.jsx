@@ -9,7 +9,10 @@ import {
   registerUserLeftHandler,
 } from "../../services/lobbyHubService";
 
-import { joinLobby } from "../../services/lobbyService";
+import {
+  joinLobby,
+  getParticipantsForLobby,
+} from "../../services/lobbyService";
 
 const WaitingRoom = () => {
   const { id: lobbyId } = useParams();
@@ -27,6 +30,13 @@ const WaitingRoom = () => {
 
       await startLobbyConnection(token);
       await joinLobbyGroup(lobbyId);
+
+      try {
+        const participants = await getParticipantsForLobby(lobbyId);
+        setJoinedUsers(participants);
+      } catch (err) {
+        console.error("Failed to load participants:", err);
+      }
 
       registerUserJoinedHandler((username) => {
         setJoinedUsers((prev) => {

@@ -82,3 +82,22 @@ export const joinLobby = async (lobbyId) => {
 
   return { ok: response.ok, data };
 };
+
+export const getParticipantsForLobby = async (lobbyId) => {
+  const token = localStorage.getItem("access_token");
+
+  const response = await fetch(`${API_URL}/lobby/participants/${lobbyId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text);
+  }
+
+  const data = await response.json();
+  // Pretpostavljam da vraća { usernames: string[] }
+  return data.usernames || [];
+};

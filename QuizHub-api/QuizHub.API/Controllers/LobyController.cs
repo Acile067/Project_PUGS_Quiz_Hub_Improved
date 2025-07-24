@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using QuizHub.Application.Feature.Loby.Commands.CreateLoby;
 using QuizHub.Application.Feature.Loby.Commands.JoinLobby;
 using QuizHub.Application.Feature.Loby.Queries.GetAllActiveLobbies;
+using QuizHub.Application.Feature.Loby.Queries.GetParticipantsForLobby;
 using QuizHub.Application.Feature.Question.Commands.CreateQuestion;
 
 namespace QuizHub.API.Controllers
@@ -45,6 +46,13 @@ namespace QuizHub.API.Controllers
 
             await Mediator.Send(command, cancellationToken);
             return Ok();
+        }
+        [HttpGet("participants/{lobbyId}")]
+        public async Task<IActionResult> GetParticipantsForLobbyAsync(string lobbyId, CancellationToken cancellationToken)
+        {
+            var queryRequest = new GetParticipantsForLobbyQueryRequest(lobbyId);
+            var result = await Mediator.Send(queryRequest, cancellationToken);
+            return Ok(result);
         }
     }
 }
