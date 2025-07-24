@@ -1,7 +1,8 @@
 import React from "react";
+import LobbyList from "../components/LobbyList/LobbyList";
 
 const JoinLobbyPage = () => {
-  return <div>JoinLobbyPage</div>;
+  return <LobbyList />;
 };
 
 export default JoinLobbyPage;

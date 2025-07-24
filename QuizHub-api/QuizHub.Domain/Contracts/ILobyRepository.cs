@@ -10,5 +10,6 @@ namespace QuizHub.Domain.Contracts
     public interface ILobyRepository
     {
         Task<bool> CreateLobyAsync(Loby loby, CancellationToken cancellationToken);
+        Task<IEnumerable<Loby>> GetAllActiveLobbiesAsync(CancellationToken cancellationToken);
     }
 }
