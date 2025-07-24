@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuizHub.Application.Feature.Loby.Commands.Queries.GetAllActiveLobbies
+namespace QuizHub.Application.Feature.Loby.Queries.GetAllActiveLobbies
 {
     public class GetAllActiveLobbiesQueryHandler : IRequestHandler<GetAllActiveLobbiesQueryRequest, GetAllActiveLobbiesQueryResponse>
     {

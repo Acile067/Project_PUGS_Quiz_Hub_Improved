@@ -60,3 +60,25 @@ export const getActiveLobbies = async () => {
 
   return { ok: response.ok, data };
 };
+
+export const joinLobby = async (lobbyId) => {
+  const token = localStorage.getItem("access_token");
+
+  const response = await fetch(`${API_URL}/lobby/${lobbyId}/join`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  let dataText = await response.text(); // pročitaj kao tekst (samo jednom)
+  let data;
+
+  try {
+    data = JSON.parse(dataText); // pokušaj da parsiraš kao JSON
+  } catch {
+    data = { detail: dataText }; // ako nije JSON, stavi plain text
+  }
+
+  return { ok: response.ok, data };
+};

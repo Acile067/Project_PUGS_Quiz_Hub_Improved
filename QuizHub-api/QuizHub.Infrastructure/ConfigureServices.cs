@@ -29,6 +29,7 @@ namespace QuizHub.Infrastructure
             services.AddScoped<IUserAnswerRepository, UserAnswerRepository>();
             services.AddScoped<ILobyRepository, LobyRepository>();
             services.AddHostedService<LobbyStatusCheckerService>();
+            services.AddScoped<ILobbyNotifier, LobbyNotifier>();
 
             return services;
         }

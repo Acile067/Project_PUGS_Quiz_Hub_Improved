@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuizHub.Application.Feature.Loby.Commands.CreateLoby;
-using QuizHub.Application.Feature.Loby.Commands.Queries.GetAllActiveLobbies;
+using QuizHub.Application.Feature.Loby.Commands.JoinLobby;
+using QuizHub.Application.Feature.Loby.Queries.GetAllActiveLobbies;
 using QuizHub.Application.Feature.Question.Commands.CreateQuestion;
 
 namespace QuizHub.API.Controllers
@@ -34,6 +35,16 @@ namespace QuizHub.API.Controllers
             var queryRequest = new GetAllActiveLobbiesQueryRequest();
             var result = await Mediator.Send(queryRequest, cancellationToken);
             return Ok(result);
+        }
+        [HttpPost("{lobbyId}/join")]
+        public async Task<IActionResult> JoinLobbyAsync(string lobbyId, CancellationToken cancellationToken)
+        {
+            var username = IdentityService.Username;
+
+            var command = new JoinLobbyCommand(lobbyId, username);
+
+            await Mediator.Send(command, cancellationToken);
+            return Ok();
         }
     }
 }

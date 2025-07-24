@@ -30,6 +30,7 @@ const EditQuizForm = React.lazy(() =>
 const AdminQuizPage = React.lazy(() => import("../pages/AdminQuizPage"));
 const JoinLobbyPage = React.lazy(() => import("../pages/JoinLobbyPage"));
 const CreateLobbyPage = React.lazy(() => import("../pages/CreateLobbyPage"));
+const QuizRoomPage = React.lazy(() => import("../pages/QuizRoomPage"));
 
 export const mainRoutes = (
   <Route path="/" element={<MainLayout />}>
@@ -79,6 +80,14 @@ export const mainRoutes = (
       element={
         <PrivateRoute>
           <JoinLobbyPage />
+        </PrivateRoute>
+      }
+    />
+    <Route
+      path="lobby/join/:id"
+      element={
+        <PrivateRoute>
+          <QuizRoomPage />
         </PrivateRoute>
       }
     />
