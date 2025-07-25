@@ -98,6 +98,8 @@ export const getParticipantsForLobby = async (lobbyId) => {
   }
 
   const data = await response.json();
-  // Pretpostavljam da vraća { usernames: string[] }
-  return data.usernames || [];
+  return {
+    usernames: data.usernames || [],
+    startAt: data.startAt,
+  };
 };

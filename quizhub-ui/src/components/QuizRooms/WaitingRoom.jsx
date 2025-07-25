@@ -17,6 +17,8 @@ import {
 const WaitingRoom = () => {
   const { id: lobbyId } = useParams();
   const [joinedUsers, setJoinedUsers] = useState([]);
+  const [startAt, setStartAt] = useState(null);
+  const [countdown, setCountdown] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -32,8 +34,9 @@ const WaitingRoom = () => {
       await joinLobbyGroup(lobbyId);
 
       try {
-        const participants = await getParticipantsForLobby(lobbyId);
-        setJoinedUsers(participants);
+        const { usernames, startAt } = await getParticipantsForLobby(lobbyId);
+        setJoinedUsers(usernames);
+        setStartAt(startAt);
       } catch (err) {
         console.error("Failed to load participants:", err);
       }
@@ -58,6 +61,24 @@ const WaitingRoom = () => {
     };
   }, [lobbyId]);
 
+  useEffect(() => {
+    if (!startAt) return;
+
+    const interval = setInterval(() => {
+      const diff = new Date(startAt) - new Date();
+      if (diff <= 0) {
+        setCountdown("Lobby is starting...");
+        clearInterval(interval);
+      } else {
+        const minutes = Math.floor(diff / 60000);
+        const seconds = Math.floor((diff % 60000) / 1000);
+        setCountdown(`${minutes}:${seconds.toString().padStart(2, "0")}`);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [startAt]);
+
   return (
     <div className="max-w-3xl mx-auto p-6">
       <h2 className="text-2xl font-bold mb-4">Lobby: {lobbyId}</h2>
@@ -69,6 +90,11 @@ const WaitingRoom = () => {
           </li>
         ))}
       </ul>
+      {countdown && (
+        <div className="mb-4 text-lg text-blue-600 font-semibold">
+          Lobby starts in: {countdown}
+        </div>
+      )}
     </div>
   );
 };

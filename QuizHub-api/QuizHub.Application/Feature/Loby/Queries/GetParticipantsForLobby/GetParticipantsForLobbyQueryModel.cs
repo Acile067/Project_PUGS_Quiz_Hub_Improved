@@ -19,5 +19,6 @@ namespace QuizHub.Application.Feature.Loby.Queries.GetParticipantsForLobby
     public class GetParticipantsForLobbyQueryResponse
     {
         public List<string> Usernames { get; set; } = new List<string>();
+        public DateTime StartAt { get; set; }
     }
 }

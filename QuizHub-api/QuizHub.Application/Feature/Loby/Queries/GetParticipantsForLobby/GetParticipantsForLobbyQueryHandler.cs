@@ -25,7 +25,8 @@ namespace QuizHub.Application.Feature.Loby.Queries.GetParticipantsForLobby
             }
             var response = new GetParticipantsForLobbyQueryResponse
             {
-                Usernames = lobby.Participants.Select(p => p.Username).ToList()
+                Usernames = lobby.Participants.Select(p => p.Username).ToList(),
+                StartAt = lobby.StartAt
             };
             return response;
 
