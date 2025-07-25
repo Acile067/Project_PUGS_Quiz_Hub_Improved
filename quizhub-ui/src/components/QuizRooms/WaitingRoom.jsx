@@ -43,7 +43,10 @@ const WaitingRoom = () => {
       try {
         const { usernames, startAt } = await getParticipantsForLobby(lobbyId);
         setJoinedUsers(usernames);
-        setStartAt(startAt);
+        const normalizedStartAt = startAt.endsWith("Z")
+          ? startAt
+          : startAt + "Z";
+        setStartAt(new Date(normalizedStartAt));
       } catch (err) {
         console.error("Failed to load participants:", err);
       }
@@ -81,7 +84,12 @@ const WaitingRoom = () => {
     if (!startAt) return;
 
     const interval = setInterval(() => {
-      const diff = new Date(startAt) - new Date();
+      const now = Date.now();
+      const diff = startAt.getTime() - now;
+
+      console.log("startAt:", startAt);
+      console.log("diff (ms):", diff);
+
       if (diff <= 0) {
         setCountdown("Lobby is starting...");
         clearInterval(interval);
