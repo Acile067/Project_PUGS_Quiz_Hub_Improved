@@ -14,11 +14,18 @@ import {
   getParticipantsForLobby,
 } from "../../services/lobbyService";
 
+import {
+  registerQuestionReceivedHandler,
+  registerQuizCompletedHandler,
+} from "../../services/lobbyHubService";
+
 const WaitingRoom = () => {
   const { id: lobbyId } = useParams();
   const [joinedUsers, setJoinedUsers] = useState([]);
   const [startAt, setStartAt] = useState(null);
   const [countdown, setCountdown] = useState("");
+  const [currentQuestion, setCurrentQuestion] = useState(null);
+  const [quizFinished, setQuizFinished] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -50,6 +57,15 @@ const WaitingRoom = () => {
 
       registerUserLeftHandler((username) => {
         setJoinedUsers((prev) => prev.filter((u) => u !== username));
+      });
+
+      registerQuestionReceivedHandler((question) => {
+        console.log("Received question:", question);
+        setCurrentQuestion(question); // vidi sledeće
+      });
+
+      registerQuizCompletedHandler(() => {
+        setQuizFinished(true);
       });
     };
 
@@ -93,6 +109,24 @@ const WaitingRoom = () => {
       {countdown && (
         <div className="mb-4 text-lg text-blue-600 font-semibold">
           Lobby starts in: {countdown}
+        </div>
+      )}
+      {currentQuestion && (
+        <div className="mt-6 p-4 border rounded shadow bg-white">
+          <h3 className="text-xl font-bold mb-2">
+            Question {currentQuestion.index}
+          </h3>
+          <p className="text-gray-800 mb-2">{currentQuestion.text}</p>
+          <p className="text-sm text-gray-500 italic">
+            Type: {currentQuestion.type}
+          </p>
+          {/* Možeš dodati Options ovde kad budeš imao podršku */}
+        </div>
+      )}
+
+      {quizFinished && (
+        <div className="mt-6 text-green-600 font-semibold text-xl">
+          The quiz has ended. Thank you for participating!
         </div>
       )}
     </div>

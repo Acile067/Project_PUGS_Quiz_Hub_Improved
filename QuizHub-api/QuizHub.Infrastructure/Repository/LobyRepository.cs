@@ -30,11 +30,26 @@ namespace QuizHub.Infrastructure.Repository
                 .ToListAsync(cancellationToken);
         }
 
+        public async Task<IEnumerable<Loby>> GetAllActiveLobbiesTrueAsync(CancellationToken cancellationToken)
+        {
+            return await _context.Lobies
+                .Where(l => l.IsActive)
+                .ToListAsync(cancellationToken);
+        }
+
         public async Task<Loby?> GetLobyByIdAsync(string lobyId)
         {
             return await _context.Lobies
                 .Include(l => l.Participants)
                 .FirstOrDefaultAsync(l => l.Id == lobyId);
+        }
+
+        public async Task<Loby?> GetLobyQuizByIdAsync(string lobbyId)
+        {
+            return await _context.Lobies
+                .Include(l => l.Quiz)
+                    .ThenInclude(q => q.Questions)
+                .FirstOrDefaultAsync(l => l.Id == lobbyId);
         }
 
         public async Task<bool> UpdateLobyAsync(Loby loby)

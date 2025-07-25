@@ -11,7 +11,9 @@ namespace QuizHub.Domain.Contracts
     {
         Task<bool> CreateLobyAsync(Loby loby, CancellationToken cancellationToken);
         Task<IEnumerable<Loby>> GetAllActiveLobbiesAsync(CancellationToken cancellationToken);
+        Task<IEnumerable<Loby>> GetAllActiveLobbiesTrueAsync(CancellationToken cancellationToken);
         Task<Loby?> GetLobyByIdAsync(string lobyId);
+        Task<Loby?> GetLobyQuizByIdAsync(string lobbyId);
         Task<bool> UpdateLobyAsync(Loby loby);
     }
 }

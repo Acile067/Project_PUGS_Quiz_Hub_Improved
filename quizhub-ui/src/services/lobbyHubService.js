@@ -4,6 +4,16 @@ let connection = null;
 let connectedLobbyId = null;
 let userJoinedCallback = null;
 let userLeftCallback = null;
+let questionReceivedCallback = null;
+let quizCompletedCallback = null;
+
+export const registerQuestionReceivedHandler = (callback) => {
+  questionReceivedCallback = callback;
+};
+
+export const registerQuizCompletedHandler = (callback) => {
+  quizCompletedCallback = callback;
+};
 
 export const registerUserLeftHandler = (callback) => {
   userLeftCallback = callback;
@@ -25,6 +35,14 @@ export const startLobbyConnection = async (token) => {
 
     connection.on("UserLeft", (username) => {
       if (userLeftCallback) userLeftCallback(username);
+    });
+
+    connection.on("ReceiveQuestion", (question) => {
+      if (questionReceivedCallback) questionReceivedCallback(question);
+    });
+
+    connection.on("QuizCompleted", () => {
+      if (quizCompletedCallback) quizCompletedCallback();
     });
 
     await connection.start();

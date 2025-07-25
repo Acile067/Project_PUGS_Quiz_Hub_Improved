@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿/*using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using QuizHub.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -45,3 +45,4 @@ namespace QuizHub.Infrastructure.Services
         }
     }
 }
+*/
