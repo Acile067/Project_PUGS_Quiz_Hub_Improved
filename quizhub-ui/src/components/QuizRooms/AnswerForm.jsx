@@ -25,7 +25,7 @@ const AnswerForm = ({ question, userAnswer, onChange, onMultiChange }) => {
               name={question.questionId}
               value="false"
               checked={userAnswer === false}
-              onChange={() => onChange(question.id, false)}
+              onChange={() => onChange(question.questionId, false)}
             />{" "}
             False
           </label>

@@ -28,7 +28,6 @@ namespace QuizHub.Infrastructure
             services.AddScoped<IQuizResultRepository, QuizResultRepository>();
             services.AddScoped<IUserAnswerRepository, UserAnswerRepository>();
             services.AddScoped<ILobyRepository, LobyRepository>();
-            //services.AddHostedService<LobbyStatusCheckerService>();
             services.AddScoped<ILobbyNotifier, LobbyNotifier>();
             services.AddHostedService<LobbySchedulerService>();
             services.AddScoped<IQuestionSenderService, QuestionSenderService>();

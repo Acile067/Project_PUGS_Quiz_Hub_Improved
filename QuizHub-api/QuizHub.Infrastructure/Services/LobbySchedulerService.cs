@@ -33,7 +33,7 @@ namespace QuizHub.Infrastructure.Services
                 {
                     if (lobby.StartAt <= DateTime.UtcNow && lobby.IsActive)
                     {
-                        lobby.IsActive = false; // Ne zovi ponovo
+                        lobby.IsActive = false;
                         await lobyRepo.UpdateLobyAsync(lobby);
                         _ = questionSender.StartQuestionFlowAsync(lobby.Id, stoppingToken);
                     }
