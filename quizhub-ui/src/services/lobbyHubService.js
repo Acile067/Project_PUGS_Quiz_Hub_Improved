@@ -6,6 +6,11 @@ let userJoinedCallback = null;
 let userLeftCallback = null;
 let questionReceivedCallback = null;
 let quizCompletedCallback = null;
+let scoreUpdatedCallback = null;
+
+export const registerScoreUpdatedHandler = (callback) => {
+  scoreUpdatedCallback = callback;
+};
 
 export const registerQuestionReceivedHandler = (callback) => {
   questionReceivedCallback = callback;
@@ -43,6 +48,15 @@ export const startLobbyConnection = async (token) => {
 
     connection.on("QuizCompleted", () => {
       if (quizCompletedCallback) quizCompletedCallback();
+    });
+
+    connection.on("Test", (message) => {
+      alert(message);
+    });
+
+    connection.on("ScoreUpdated", (data) => {
+      console.log("Raw ScoreUpdated data from server:", data);
+      if (scoreUpdatedCallback) scoreUpdatedCallback(data);
     });
 
     await connection.start();
@@ -90,5 +104,18 @@ export const stopLobbyConnection = async () => {
     connection = null;
     userJoinedCallback = null;
     userLeftCallback = null;
+  }
+};
+
+export const sendAnswer = async (answerPayload) => {
+  if (!connection || connection.state !== "Connected") {
+    console.warn("Not connected to SignalR");
+    return;
+  }
+
+  try {
+    await connection.invoke("SubmitAnswer", answerPayload);
+  } catch (error) {
+    console.error("Failed to send answer:", error);
   }
 };

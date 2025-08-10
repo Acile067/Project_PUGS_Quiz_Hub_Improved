@@ -50,8 +50,8 @@ const AnswerForm = ({ question, userAnswer, onChange, onMultiChange }) => {
                 type="radio"
                 name={`single-${question.questionId}`}
                 value={i}
-                checked={userAnswer === i}
-                onChange={() => onChange(question.questionId, i)}
+                checked={userAnswer === i + 1}
+                onChange={() => onChange(question.questionId, i + 1)}
               />{" "}
               {option}
             </label>
@@ -66,8 +66,8 @@ const AnswerForm = ({ question, userAnswer, onChange, onMultiChange }) => {
               <input
                 type="checkbox"
                 value={i}
-                checked={(userAnswer || []).includes(i)}
-                onChange={() => onMultiChange(question.questionId, i)}
+                checked={(userAnswer || []).includes(i + 1)}
+                onChange={() => onMultiChange(question.questionId, i + 1)}
               />{" "}
               {option}
             </label>

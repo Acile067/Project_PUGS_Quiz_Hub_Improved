@@ -19,5 +19,8 @@ namespace QuizHub.Domain.Entities
         public DateTime StartAt { get; set; }
         public List<User> Participants { get; set; } = new List<User>();
         public bool IsActive { get; set; }
+
+        public Dictionary<string, int> Scores { get; set; } = new(); // username -> score
+        public Dictionary<Guid, List<string>> CorrectAnswers { get; set; } = new(); // questionId -> list of usernames koji su tačno odgovorili
     }
 }

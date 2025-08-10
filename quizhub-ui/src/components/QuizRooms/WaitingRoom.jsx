@@ -7,6 +7,8 @@ import {
   stopLobbyConnection,
   registerUserJoinedHandler,
   registerUserLeftHandler,
+  sendAnswer,
+  registerScoreUpdatedHandler,
 } from "../../services/lobbyHubService";
 
 import {
@@ -29,6 +31,9 @@ const WaitingRoom = () => {
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [quizFinished, setQuizFinished] = useState(false);
   const [userAnswer, setUserAnswer] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+  const [answeredQuestions, setAnsweredQuestions] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -45,7 +50,7 @@ const WaitingRoom = () => {
 
       try {
         const { usernames, startAt } = await getParticipantsForLobby(lobbyId);
-        setJoinedUsers(usernames);
+        setJoinedUsers(usernames.map((u) => ({ username: u, score: 0 })));
         const normalizedStartAt = startAt.endsWith("Z")
           ? startAt
           : startAt + "Z";
@@ -56,13 +61,23 @@ const WaitingRoom = () => {
 
       registerUserJoinedHandler((username) => {
         setJoinedUsers((prev) => {
-          if (prev.includes(username)) return prev;
-          return [...prev, username];
+          if (prev.some((u) => u.username === username)) return prev;
+          return [...prev, { username, score: 0 }];
         });
       });
 
       registerUserLeftHandler((username) => {
-        setJoinedUsers((prev) => prev.filter((u) => u !== username));
+        setJoinedUsers((prev) => prev.filter((u) => u.username !== username));
+      });
+
+      registerScoreUpdatedHandler(({ username, score }) => {
+        console.log("ScoreUpdated event:", username, score);
+
+        setJoinedUsers((prev) => {
+          return prev.map((u) =>
+            u.username === username ? { ...u, score: score } : u
+          );
+        });
       });
 
       registerQuestionReceivedHandler((question) => {
@@ -129,7 +144,7 @@ const WaitingRoom = () => {
       <ul className="list-disc pl-6 space-y-1">
         {joinedUsers.map((user, index) => (
           <li key={index} className="text-gray-800">
-            {user}
+            {user.username} ({user.score} pts)
           </li>
         ))}
       </ul>
@@ -152,11 +167,45 @@ const WaitingRoom = () => {
           />
 
           <button
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700"
-            onClick={() => console.log("To be implemented: send answer")}
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700 disabled:bg-gray-400"
+            disabled={
+              isSubmitting ||
+              userAnswer === null ||
+              answeredQuestions.includes(currentQuestion.questionId)
+            }
+            onClick={async () => {
+              if (!currentQuestion || userAnswer === null) return;
+
+              setIsSubmitting(true);
+              setSubmitError(null);
+
+              const payload = {
+                questionId: currentQuestion.questionId,
+                answer: userAnswer,
+                lobbyId: lobbyId,
+              };
+
+              try {
+                await sendAnswer(payload);
+                // Zaključaj pitanje nakon slanja
+                setAnsweredQuestions((prev) => [
+                  ...prev,
+                  currentQuestion.questionId,
+                ]);
+              } catch (error) {
+                console.error("Error submitting answer", error);
+                setSubmitError("Došlo je do greške prilikom slanja odgovora.");
+              } finally {
+                setIsSubmitting(false);
+              }
+            }}
           >
-            Submit Answer
+            {isSubmitting ? "Slanje..." : "Pošalji odgovor"}
           </button>
+
+          {submitError && (
+            <div className="mt-2 text-red-600 text-sm">{submitError}</div>
+          )}
         </div>
       )}
 
